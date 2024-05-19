@@ -1,0 +1,9 @@
+SELECT
+  dpc.ProductCategoryID,
+  dpc.ProductCategoryName,
+  COUNT(fod.SalesOrderDetailID) AS TotalProductsSold,
+  SUM(fod.UnitPrice * fod.OrderQty) AS TotalRevenue
+FROM FactOrderDetails fod
+JOIN DimProduct dp ON fod.ProductID = dp.ProductID
+JOIN DimProductCategory dpc ON dp.ProductCategoryID = dpc.ProductCategoryID
+GROUP BY dpc.ProductCategoryID, dpc.ProductCategoryName;

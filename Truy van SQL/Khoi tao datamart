@@ -1,0 +1,60 @@
+CREATE TABLE `DimCustomer` (
+  `CustomerID` int PRIMARY KEY,
+  `CustomerFullName` varchar(255),
+  `AccountNumber` varchar(255),
+  `FirstName` varchar(255),
+  `MiddleName` varchar(255),
+  `LastName` varchar(255)
+);
+
+CREATE TABLE `DimProduct` (
+  `ProductID` int PRIMARY KEY,
+  `ProductName` varchar(255),
+  `Color` varchar(255),
+  `ListPrice` int,
+  `Size` varchar(255),
+  `ProductCategoryID` int
+);
+
+CREATE TABLE `DimProductCategory` (
+  `ProductCategoryID` int PRIMARY KEY,
+  `ProductCategoryName` varchar(255)
+);
+
+CREATE TABLE `DimDate` (
+  `DateID` int PRIMARY KEY,
+  `Date` date,
+  `Year` int,
+  `Month` int,
+  `Day` int,
+  `Quarter` int
+);
+
+CREATE TABLE `FactOrder` (
+  `SalesOrderID` int PRIMARY KEY,
+  `OrderDateID` int,
+  `ShipDateID` int,
+  `CustomerID` int,
+  `SubTotal` money
+);
+
+CREATE TABLE `FactOrderDetails` (
+  `SalesOrderID` int,
+  `SalesOrderDetailID` int PRIMARY KEY,
+  `ProductID` int,
+  `OrderQty` int,
+  `UnitPrice` money,
+  `UnitPriceDiscount` money
+);
+
+ALTER TABLE `FactOrder` ADD FOREIGN KEY (`CustomerID`) REFERENCES `DimCustomer` (`CustomerID`);
+
+ALTER TABLE `FactOrderDetails` ADD FOREIGN KEY (`SalesOrderID`) REFERENCES `FactOrder` (`SalesOrderID`);
+
+ALTER TABLE `FactOrderDetails` ADD FOREIGN KEY (`ProductID`) REFERENCES `DimProduct` (`ProductID`);
+
+ALTER TABLE `FactOrder` ADD FOREIGN KEY (`OrderDateID`) REFERENCES `DimDate` (`DateID`);
+
+ALTER TABLE `DimProduct` ADD FOREIGN KEY (`ProductCategoryID`) REFERENCES `DimProductCategory` (`ProductCategoryID`);
+
+ALTER TABLE `FactOrder` ADD FOREIGN KEY (`ShipDateID`) REFERENCES `DimDate` (`DateID`);

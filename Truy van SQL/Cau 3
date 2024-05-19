@@ -1,0 +1,29 @@
+WITH MonthlyRevenue AS (
+  SELECT
+    YEAR(d.Date) AS OrderYear,
+    MONTH(d.Date) AS OrderMonth,
+    fo.CustomerID,
+    dc.CustomerFullName,
+    SUM(fo.SubTotal) AS CustomerMonthAmount
+  FROM FactOrder fo
+  JOIN DimDate d ON fo.OrderDateID = d.DateID
+  JOIN DimCustomer dc ON fo.CustomerID = dc.CustomerID
+  GROUP BY YEAR(d.Date), MONTH(d.Date), fo.CustomerID, dc.CustomerFullName
+)
+SELECT
+  OrderYear,
+  OrderMonth,
+  CustomerID,
+  CustomerFullName,
+  CustomerMonthAmount
+FROM (
+  SELECT
+    OrderYear,
+    OrderMonth,
+    CustomerID,
+    CustomerFullName,
+    CustomerMonthAmount,
+    ROW_NUMBER() OVER (PARTITION BY OrderYear, OrderMonth ORDER BY EmployeeMonthAmount DESC) AS rn
+  FROM MonthlyRevenue
+) AS TopCustomers
+WHERE rn <= 5;

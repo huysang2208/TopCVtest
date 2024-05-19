@@ -1,0 +1,8 @@
+SELECT
+  dc.CustomerID,
+  dc.CustomerFullName,
+  COUNT(fo.SalesOrderID) AS TotalOrders,
+  SUM(fo.SubTotal) AS TotalRevenue
+FROM FactOrder fo
+JOIN DimCustomer dc ON fo.CustomerID = dc.CustomerID
+GROUP BY dc.CustomerID, dc.CustomerFullName;
